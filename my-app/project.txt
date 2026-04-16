@@ -1,0 +1,114 @@
+pipeline {
+    agent any
+
+    environment {
+        JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'
+        PATH = "/usr/lib/jvm/java-17-openjdk-amd64/bin:${env.PATH}"
+    }
+
+    stages {
+        stage("checkout") {
+            steps {
+                deleteDir()
+                git branch:"main",url:"https://github.com/deepakbhat18/devops_lab_10-04.git"
+            }
+        }
+
+        stage("Build") {
+            steps {
+                dir("my-app") {
+                    sh "java -version"
+                    sh "javac -version"
+                    sh "mvn -version"
+                    sh "mvn clean package"
+                }
+            }
+        }
+
+        stage("Test") {
+            steps {
+                dir("my-app") {
+                    sh "mvn test"
+                }
+            }
+        }
+
+        stage("Archive Artifacts") {
+            steps{
+                archiveArtifacts artifacts:"**/target/*.jar",
+                allowEmptyArchive:true
+            }
+        }
+
+        stage("Deploy") {
+            steps {
+                sh """
+                mkdir -p /home/deepak/deploy
+                cp my-app/target/*.jar /home/deepak/deploy/
+                """
+            }
+        }
+    }
+}
+ for 6th expt
+
+
+
+pipeline {
+    agent any
+
+    environment {
+        JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'
+        PATH = "/usr/lib/jvm/java-17-openjdk-amd64/bin:${env.PATH}"
+    }
+
+    stages {
+        stage("checkout") {
+            steps {
+                deleteDir()
+                git branch:"main",url:"https://github.com/deepakbhat18/devops_lab_10-04.git"
+            }
+        }
+
+        stage("Build") {
+            steps {
+                dir("my-app") {
+                    sh "java -version"
+                    sh "javac -version"
+                    sh "mvn -version"
+                    sh "mvn clean package"
+                }
+            }
+        }
+
+        stage("Test") {
+            steps {
+                dir("my-app") {
+                    sh "mvn test"
+                }
+            }
+        }
+
+        stage("Archive Artifacts") {
+            steps{
+                archiveArtifacts artifacts:"**/target/*.jar",
+                allowEmptyArchive:true
+            }
+        }
+
+        stage("Deploy") {
+            steps {
+                dir("my-app") {
+                    sh """
+                    export LANG=en_US.UTF-8
+                    export LC_ALL=en_US.UTF-8
+                    export ANSIBLE_HOST_KEY_CHECKING=False
+                    ansible-playbook -i hosts.ini deploy.yml
+                    """
+                }
+            }
+        }
+    }
+}
+
+expt 8
