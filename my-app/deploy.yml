@@ -1,0 +1,11 @@
+---
+- name: Deploy Artifact to Localhost
+  hosts: localhost
+  connection: local
+  become: false
+
+  tasks:
+    - name: Copy JAR file
+      copy:
+        src: "/var/snap/jenkins/5013/workspace/lab6/my-app/target/my-app-1.0-SNAPSHOT.jar"
+        dest: "/home/deepak/t.jar"
